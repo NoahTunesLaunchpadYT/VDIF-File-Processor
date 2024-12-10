@@ -76,7 +76,8 @@ def display_commands():
     print("  - plot            - Plot over a range of times")
     print("  - plot_fourier    - (coming soon) Plot the Forier transform of range of frame")
     print("  - plot_waterfall  - (coming soon) Plot up to a specific frame")
-    print("  - exit            - (coming soon) Exit the program\n")
+    print("  - exit            - (coming soon) Exit the program")
+    print("  - clear           - clear the terminal\n")
 
 def get_command():
     return input("Enter your command (type 'help' for command list): ").strip().lower()
@@ -116,6 +117,8 @@ def main():
             simp.check_simplicity(vdif_file)
         elif command == "exit":
             print("Exiting the program. Goodbye!")
+        elif command == "clear":
+            os.system('cls')
         else:
             print("Unknown command. Please try again.")
 

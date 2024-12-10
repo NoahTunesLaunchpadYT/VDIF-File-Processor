@@ -40,7 +40,7 @@ def check_simplicity(file_path):
 
                 while offset < file_size:
                     # Read the header of the current frame from the memory-mapped file
-                    header_info = fr.read_vdif_frame_header_fast(mmapped_file, offset)
+                    header_info = fr.read_vdif_frame_header(mmapped_file, offset)
 
                     if reference_epoch is None:
                         # Set reference epoch and starting time

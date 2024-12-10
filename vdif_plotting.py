@@ -5,10 +5,14 @@ import matplotlib.pyplot as plt
 import mmap
 
 def plot_first_frame(file_path):
+    file_info = props.get_vdif_file_properties(file_path)
+
     with open(file_path, 'rb') as file:
-        # Read and plot the first frame of data
-        header_info, data = fr.read_vdif_frame_data(file)
-        
+        mmapped_file = mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ)
+        # Read the first frame's header and data
+        offset = 0
+        header_info, data = fr.read_vdif_frame_data(mmapped_file, offset, file_info)
+
         plot_data(data)
 
 def plot_data(data):
