@@ -14,8 +14,8 @@ Dependencies:
 
 import struct
 import numpy as np
+from tqdm import tqdm
 
-# For unpacking an arbitrary range of frames
 def generate_data_from_time_range(file_info, 
                                   mmapped_file, 
                                   start_seconds_from_epoch, 
@@ -43,6 +43,9 @@ def generate_data_from_time_range(file_info,
     start_offset = int(frames_per_second * start_seconds) * frame_length
     end_offset = int(frames_per_second * end_seconds) * frame_length
 
+    # Calculate the total number of frames to process
+    total_frames = (end_offset - start_offset) // frame_length
+
     # Initialize a numpy array to store the continuous data
     all_data = []
 
@@ -50,23 +53,29 @@ def generate_data_from_time_range(file_info,
     offset = start_offset
     starting_header_info = None
 
-    while offset < end_offset:
-        # Read each frame's header and data
-        if starting_header_info == None:
-            starting_header_info, data = read_vdif_frame_data(mmapped_file, offset, file_info)
-        else:
-            temp, data = read_vdif_frame_data(mmapped_file, offset, file_info)
+    # Use tqdm for the progress bar
+    with tqdm(total=total_frames, desc="Generating data", unit="frame") as pbar:
+        while offset < end_offset:
+            # Read each frame's header and data
+            if starting_header_info is None:
+                starting_header_info, data = read_vdif_frame_data(mmapped_file, offset, file_info)
+            else:
+                _, data = read_vdif_frame_data(mmapped_file, offset, file_info)
 
-        # Append data to the continuous array
-        all_data.append(data)
+            # Append data to the continuous array
+            all_data.append(data)
 
-        # Move to the next frame
-        offset += frame_length
+            # Move to the next frame
+            offset += frame_length
+
+            # Update the progress bar
+            pbar.update(1)
 
     # Convert the list of data arrays into a single continuous numpy array
     all_data = np.vstack(all_data)
 
     return starting_header_info, all_data
+
 
 def unpack_vdif_header_start(header_bytes):
     """
@@ -201,4 +210,3 @@ def read_vdif_frame_header(mmapped_file, offset):
     header_info = header_info1 | header_info2
 
     return header_info
-

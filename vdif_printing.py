@@ -1,6 +1,7 @@
 import vdif_data_frame_reader as fr
 import vdif_datetime as dt
 import vdif_properties as props
+import vdif_analysing as anal
 import mmap
 
 # PUBLIC FUNCTIONS
@@ -13,34 +14,18 @@ def print_first_frame_all(file_path):
 
 def print_frames(file_path):
     """
-    Prints a range of frames from the VDIF file based on the user input time range.
-    Args:
-        file_path (str): The path to the VDIF file.
+    Print details about the data retrieved from a VDIF file for a user-specified time range.
     """
-    file_info = props.print_vdif_file_properties(file_path)
-
-    # Get the time range from the user since epoch
-    start_seconds, end_seconds = dt.get_time_range_from_user(file_info)
-
-    # Open the VDIF file and memory-map it for efficient access
-    with open(file_path, 'rb') as file:
-        mmapped_file = mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ)
-
-        # Generate the data over the time period
-        starting_header, data = fr.generate_data_from_time_range(file_info, mmapped_file, start_seconds, end_seconds)
-
-        # Print details about the retrieved data
+    def print_details(file_info, starting_header, data, start_seconds, end_seconds):
         start_datetime = dt.convert_to_datetime(file_info["reference_epoch"], start_seconds)
         end_datetime = dt.convert_to_datetime(file_info["reference_epoch"], end_seconds)
-
-        # Visualize the start and end of the data
         print_header(starting_header)
-        print_data(data)        
+        print_data(data)
         print(f"Data range from {start_seconds} to {end_seconds} seconds since epoch")
-        print(f"Data range from {start_datetime} to {end_datetime} since epoch")
-        print(f"Number of samples: {len(data)}")
-        print("")
+        print(f"Data range from {start_datetime} to {end_datetime}")
+        print(f"Number of samples: {len(data)}\n")
 
+    anal.process_data_window(file_path, print_details)
 
 
 #HELPER FUNCTIONS

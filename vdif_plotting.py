@@ -1,53 +1,78 @@
 import vdif_data_frame_reader as fr
 import vdif_properties as props
 import vdif_datetime as dt
+import vdif_analysing as anal
 import matplotlib.pyplot as plt
 import mmap
-
-def plot_first_frame(file_path):
-    file_info = props.get_vdif_file_properties(file_path)
-
-    with open(file_path, 'rb') as file:
-        mmapped_file = mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ)
-        # Read the first frame's header and data
-        offset = 0
-        header_info, data = fr.read_vdif_frame_data(mmapped_file, offset, file_info)
-
-        plot_data(data)
+import numpy as np
 
 def plot_data(data):
+    """
+    Plot data samples against time.
+    """
+    print("Plotting data...")
+
     plt.figure(figsize=(10, 5))
-    plt.plot(data[:,0], data[:,1], label="Data Samples")
+    plt.plot(data[:, 0], data[:, 1], label="Data Samples")
     plt.title("VDIF Frame Data")
     plt.xlabel("Time since epoch")
     plt.ylabel("Amplitude")
     plt.legend(loc="upper right")
     plt.grid()
-    plt.show()
+    plt.show(block=False)
 
+
+def plot_data_fourier(data):
+    """
+    Perform a Fourier Transform on the data and plot amplitude vs. frequency.
+    """
+    print("Plotting data...")
+
+    time = data[:, 0]
+    values = data[:, 1]
+    time_step = np.mean(np.diff(time))
+    fft_result = np.fft.fft(values)
+    fft_shifted_result = np.fft.fftshift(fft_result)
+    fft_freq = np.fft.fftfreq(len(values), d=time_step)
+    amplitude = np.abs(fft_shifted_result)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(fft_freq[:len(fft_freq)//2], amplitude[:len(amplitude)//2], label="Amplitude Spectrum")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Amplitude")
+    plt.title("Fourier Transform: Amplitude vs. Frequency")
+    plt.grid()
+    plt.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show(block=False)
 
 def plot_frames(file_path):
     """
-    Prints a range of frames from the VDIF file based on the user input time range.
-    Args:
-        file_path (str): The path to the VDIF file.
+    Plot data samples retrieved from a VDIF file for a user-specified time range.
     """
-    file_info = props.print_vdif_file_properties(file_path)
+    def plot(file_info, starting_header, data, start_seconds, end_seconds):
+        plot_data(data)
 
-    # Get the time range from the user since epoch
-    start_seconds, end_seconds = dt.get_time_range_from_user(file_info)
+    anal.process_data_window(file_path, plot)
 
-    # Open the VDIF file and memory-map it for efficient access
+
+def plot_frames_fourier(file_path):
+    """
+    Plot Fourier Transform of the data retrieved from a VDIF file for a user-specified time range.
+    """
+    def plot_fourier(file_info, starting_header, data, start_seconds, end_seconds):
+        plot_data_fourier(data)
+
+    anal.process_data_window(file_path, plot_fourier)
+
+
+def plot_first_frame(file_path):
+    """
+    Plot the first frame's data from a VDIF file.
+    """
+    file_info = props.get_vdif_file_properties(file_path)
     with open(file_path, 'rb') as file:
         mmapped_file = mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ)
-
-        # Generate the data over the time period
-        print("\nGenerating data...")
-        temp, data = fr.generate_data_from_time_range(file_info, mmapped_file, start_seconds, end_seconds)
-
-        # Visualize the start and end of the data
-        print("Plotting data...")
+        offset = 0
+        _, data = fr.read_vdif_frame_data(mmapped_file, offset, file_info)
         plot_data(data)
-        print("Plot closed \n")
-
-
