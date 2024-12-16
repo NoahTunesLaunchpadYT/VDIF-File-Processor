@@ -5,7 +5,7 @@ import vdif_datetime as dt
 
 def get_vdif_file_properties(file_path):
     """
-    Reads the first and last frames of a VDIF file to compute essential properties.
+    Reads the first and last frames of a VDIF file to compute essential properties, including the sampling rate.
     
     Args:
         file_path (str): Path to the VDIF file.
@@ -41,6 +41,9 @@ def get_vdif_file_properties(file_path):
             total_samples = total_frames * samples_per_frame
             frames_per_second = frame_number_of_last_frame + 1
 
+            # Calculate sampling rate
+            sampling_rate = frames_per_second * samples_per_frame
+
             # Convert seconds to human-readable date and time
             start_datetime = dt.convert_to_datetime(reference_epoch, start_seconds_from_epoch)
             end_datetime = dt.convert_to_datetime(reference_epoch, end_seconds_from_epoch + 1)
@@ -54,12 +57,15 @@ def get_vdif_file_properties(file_path):
                 "total_samples": int(total_samples),
                 "reference_epoch": reference_epoch,
                 "frames_per_second": frames_per_second,
+                "samples_per_frame": samples_per_frame,
+                "sample_rate": sampling_rate,
                 "start_seconds_from_epoch": start_seconds_from_epoch,
                 "end_seconds_from_epoch": end_seconds_from_epoch,
             }
     except Exception as e:
         print(f"Error while processing VDIF file: {e}")
         return None
+
 
 def print_vdif_file_properties(file_path):
     """
@@ -79,6 +85,7 @@ def print_vdif_file_properties(file_path):
     print(f"Total Number of Samples: {file_properties['total_samples']}")
     print(f"Reference Epoch: {file_properties['reference_epoch']}")
     print(f"Frames Per Second: {file_properties['frames_per_second']}")
+    print(f"Sample rate: {file_properties['sample_rate']} Hz")
     print(f"Seconds Since Epoch of Start of File: {file_properties['start_seconds_from_epoch']}")
     print(f"Seconds Since Epoch of End of File: {file_properties['end_seconds_from_epoch']}")
     print("")

@@ -81,6 +81,8 @@ def parse_time_input(time_str, file_info):
 def get_time_range_from_user(file_info):
     """
     Prompts the user to input a start and end time range in either seconds since epoch or datetime format.
+    Ensures the input times are within the range defined by file_info.
+    
     Args:
         file_info (dict): Information about the VDIF file, including the reference epoch.
     Returns:
@@ -89,15 +91,29 @@ def get_time_range_from_user(file_info):
     while True:
         try:
             print("Please enter the time range for the data retrieval.")
+            print(f"Valid time range: {file_info['start_seconds_from_epoch']} to {file_info['end_seconds_from_epoch']}")
+            
             start_time_str = input("Enter the start time (YYYY-MM-DD HH:MM:SS.sss or seconds since epoch): ")
             end_time_str = input("Enter the end time (YYYY-MM-DD HH:MM:SS.sss or seconds since epoch): ")
 
             start_seconds = parse_time_input(start_time_str, file_info)
             end_seconds = parse_time_input(end_time_str, file_info)
+            
+            # Validate range
+            if not (file_info['start_seconds_from_epoch'] <= start_seconds <= file_info['end_seconds_from_epoch']):
+                print(f"Start time must be within {file_info['start_seconds_from_epoch']} and {file_info['end_seconds_from_epoch']}.")
+                continue
+            
+            if not (file_info['start_seconds_from_epoch'] <= end_seconds <= file_info['end_seconds_from_epoch']):
+                print(f"End time must be within {file_info['start_seconds_from_epoch']} and {file_info['end_seconds_from_epoch']}.")
+                continue
+            
+            if start_seconds >= end_seconds:
+                print("Start time must be earlier than end time.")
+                continue
 
             break
-        except:
-            print("Incorrect format.")
-
+        except Exception as e:
+            print(f"Error: {e}. Please try again.")
 
     return start_seconds, end_seconds

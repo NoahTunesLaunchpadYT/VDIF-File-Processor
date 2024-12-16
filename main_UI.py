@@ -49,9 +49,10 @@ def display_commands():
     print("  - print_first_all - Print the first frame (full format)")
     print("  - print           - Print a range of times")
     print("  - plot            - Plot over a range of times")
-    print("  - plot_fourier    - (coming soon) Plot the Forier transform of range of frame")
-    print("  - plot_waterfall  - (coming soon) Plot up to a specific frame")
-    print("  - exit            - (coming soon) Exit the program")
+    print("  - plot_fourier    - Plot the Forier transform of range of frame")
+    print("  - plot_waterfall  - Plot a waterfall plot of amplitude given frquency and time")
+    print("  - plot_repeated_waterfall  - Plot the resultant period sum of waterfall plots")
+    print("  - exit            - Exit the program")
     print("  - clear           - clear the terminal\n")
 
 def get_command():
@@ -83,7 +84,9 @@ def main():
         elif command == "plot_fourier":
             pl.plot_frames_fourier(vdif_file)
         elif command == "plot_waterfall":
-            print("This option is coming soon.")
+            pl.plot_frames_waterfall(vdif_file)
+        elif command == "plot_repeated_waterfall":
+            pl.plot_repeated_waterfall(vdif_file)
         elif command == "is_simple":
             simp.check_simplicity(vdif_file)
         elif command == "exit":
