@@ -19,6 +19,8 @@ Dependencies:
   - vdif_is_simple.py
   - tqdm (for progress bars)
   - matplotlib (for plotting, if required in `vdif_plotting`)
+  - Pillow
+  - numpy
   - Other custom VDIF utility modules as required
 
 Usage:
@@ -52,6 +54,7 @@ def display_commands():
     print("  - plot_fourier    - Plot the Forier transform of range of frame")
     print("  - plot_waterfall  - Plot a waterfall plot of amplitude given frquency and time")
     print("  - plot_repeated_waterfall  - Plot the resultant period sum of waterfall plots")
+    print("  - auto_correlate  - Correlate a signal with itself using match filtering")
     print("  - exit            - Exit the program")
     print("  - clear           - clear the terminal\n")
 
@@ -69,6 +72,8 @@ def main():
 
         if command == "help":
             display_commands()
+        elif command == "is_simple":
+            simp.check_simplicity(vdif_file)
         elif command == "properties":
             props.print_vdif_file_properties(vdif_file)
         elif command == "print_first":
@@ -87,8 +92,8 @@ def main():
             pl.plot_frames_waterfall(vdif_file)
         elif command == "plot_repeated_waterfall":
             pl.plot_repeated_waterfall(vdif_file)
-        elif command == "is_simple":
-            simp.check_simplicity(vdif_file)
+        elif command == "auto_correlate":
+            pl.auto_correlate(vdif_file)
         elif command == "exit":
             print("Exiting the program. Goodbye!")
             break

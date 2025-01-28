@@ -2,6 +2,7 @@ import vdif_data_frame_reader as fr
 import vdif_properties as props
 import vdif_datetime as dt
 import vdif_analysing as anal
+import vdif_correlating as corr
 import matplotlib.pyplot as plt
 import mmap
 import numpy as np
@@ -35,7 +36,7 @@ def plot_data_fourier(data):
     time_step = np.mean(np.diff(time))
     fft_result = np.fft.fft(values)
     fft_shifted_result = np.fft.fftshift(fft_result)
-    fft_freq = np.fft.fftfreq(len(values), d=time_step)
+    fft_freq = np.fft.fftfreq(len(values), d=time_step)[::-1]
     amplitude = np.abs(fft_shifted_result)
 
     print("Plotting data...")
@@ -121,7 +122,7 @@ def plot_data_waterfall_chunked(data, chunk_duration=50e-6, window_size=32, over
     plt.show(block=False)
 
 
-def plot_data_waterfall(data, window_size=128, overlap=0, sampling_rate=None):
+def plot_data_waterfall(data, window_size=2048, overlap=0, sampling_rate=None):
     """
     Perform a Short-Time Fourier Transform (STFT) on the data and plot a 2D waterfall plot with color representing amplitude.
     
@@ -210,3 +211,16 @@ def plot_first_frame(file_path):
         offset = 0
         _, data = fr.read_vdif_frame_data(mmapped_file, offset, file_info)
         plot_data(data)
+
+def auto_correlate(file_path):
+    """
+    Correlates a section of a vdif file with itself
+    Args:
+        file_path (_type_): Path to vdif file
+    """    
+    file_info = props.get_vdif_file_properties(file_path)
+
+    def plot_fourier(file_info, starting_header, data, start_seconds, end_seconds):
+        corr.plot_auto_correlation(data, file_info["sample_rate"], file_path)
+    
+    anal.process_data_window(file_path, plot_fourier)

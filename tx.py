@@ -73,7 +73,7 @@ ax_corr.plot(time_correlation, correlation)
 ax_corr.set_title("Correlation with Chirp")
 
 fig.tight_layout()
-plt.show(block=False)  # Use block=False to avoid blocking execution
+plt.show()  # Use block=False to avoid blocking execution
 
 # Plotting the FFT in a new window
 fig_fft = plt.figure()

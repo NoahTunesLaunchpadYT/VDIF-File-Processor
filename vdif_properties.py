@@ -33,7 +33,7 @@ def get_vdif_file_properties(file_path):
             # Jump to the last frame
             last_frame_offset = file_size - frame_length
             last_frame_header = fr.read_vdif_frame_header(mmapped_file, last_frame_offset)
-            end_seconds_from_epoch = last_frame_header["seconds_from_epoch"]
+            end_seconds_from_epoch = last_frame_header["seconds_from_epoch"] + 1
             frame_number_of_last_frame = last_frame_header["frame_number"]
 
             # Calculate derived properties
@@ -41,8 +41,13 @@ def get_vdif_file_properties(file_path):
             total_samples = total_frames * samples_per_frame
             frames_per_second = frame_number_of_last_frame + 1
 
+            print(frames_per_second)
+            print(samples_per_frame)
+
             # Calculate sampling rate
             sampling_rate = frames_per_second * samples_per_frame
+
+            print(sampling_rate)
 
             # Convert seconds to human-readable date and time
             start_datetime = dt.convert_to_datetime(reference_epoch, start_seconds_from_epoch)

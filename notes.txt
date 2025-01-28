@@ -1,0 +1,9 @@
+Make histogram (count for each value in time series data)
+- Make pdf
+Plot doppler S curve 
+- doppler shift over time
+JPL Horizons database
+- look for asteroid
+Try Nick's signal processing technique with 40 Mhz bandwidth chirp
+
+Get the presentation on the 6th
