@@ -1,3 +1,19 @@
+# VDIF File Processor Instructions for Use
+
+This program is a set of python modules which can be used for conducting signal processing with vdif files
+
+
+
+
+
+
+
+
+
+
+
+
+
 Make histogram (count for each value in time series data)
 - Make pdf
 Plot doppler S curve 
