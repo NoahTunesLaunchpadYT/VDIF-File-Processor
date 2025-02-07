@@ -1,6 +1,11 @@
 # VDIF File Processor Instructions for Use
 
-This program is a set of python modules which can be used for conducting signal processing with vdif files
+## Purpose 
+This program is a set of python modules which can be used for conducting RADAR signal processing with vdif files.
+
+Particularly, this program can plot/print single-threaded vdif data as long as it is continuous, plot the spectral
+and waterfall plots, conduct auto-correlation and match filtering (for Linear Frequency Modulated Continuous Wave
+signals), and compensate for a changing return trip time using a PREDIX file.  
 
 
 

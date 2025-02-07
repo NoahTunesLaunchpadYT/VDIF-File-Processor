@@ -2,3 +2,5 @@ output.txt
 *.vdif
 *.txt
 plots/*
+
+!requirements.txt
